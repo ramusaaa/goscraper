@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  goscraper-server:
+    build: .
+    ports:
+      - "8080:8080"
+      - "9090:9090"
+    environment:
+      - REDIS_URL=redis:6379
+      - LOG_LEVEL=info
+    depends_on:
+      - redis
+    networks:
+      - goscraper-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - goscraper-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+volumes:
+  redis-data:
+
+networks:
+  goscraper-network:
+    driver: bridge
