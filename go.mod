@@ -1,4 +1,4 @@
-module github.com/goscraper/goscraper
+module github.com/ramusaaa/goscraper
 
 go 1.21
 

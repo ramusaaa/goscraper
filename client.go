@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/goscraper/goscraper/pkg/stealth"
+	"github.com/ramusaaa/goscraper/pkg/stealth"
 )
 
 type Client struct {

@@ -241,7 +241,7 @@ func (m *MockModel) Predict(ctx context.Context, features []float64) ([]float64,
 	return []float64{0.9}, nil
 }
 
-type SmartExtractor struct {
+type AISmartExtractor struct {
 	aiExtractor *AIExtractor
 	patterns    map[string]*ExtractionPattern
 	cache       map[string]*ExtractionResult
@@ -255,15 +255,15 @@ type ExtractionPattern struct {
 	LastUpdated string            `json:"last_updated"`
 }
 
-func NewSmartExtractor(aiExtractor *AIExtractor) *SmartExtractor {
-	return &SmartExtractor{
+func NewAISmartExtractor(aiExtractor *AIExtractor) *AISmartExtractor {
+	return &AISmartExtractor{
 		aiExtractor: aiExtractor,
 		patterns:    make(map[string]*ExtractionPattern),
 		cache:       make(map[string]*ExtractionResult),
 	}
 }
 
-func (s *SmartExtractor) LearnPattern(url string, result *ExtractionResult) {
+func (s *AISmartExtractor) LearnPattern(url string, result *ExtractionResult) {
 	domain := extractDomain(url)
 	
 	pattern, exists := s.patterns[domain]
@@ -280,7 +280,7 @@ func (s *SmartExtractor) LearnPattern(url string, result *ExtractionResult) {
 	}
 }
 
-func (s *SmartExtractor) generateSchema(data map[string]interface{}) *ExtractionSchema {
+func (s *AISmartExtractor) generateSchema(data map[string]interface{}) *ExtractionSchema {
 	var fields []FieldSchema
 	
 	for key, value := range data {

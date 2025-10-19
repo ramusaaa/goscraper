@@ -11,12 +11,12 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/goscraper/goscraper/pkg/ai"
-	"github.com/goscraper/goscraper/pkg/browser"
-	"github.com/goscraper/goscraper/pkg/cache"
-	"github.com/goscraper/goscraper/pkg/cluster"
-	"github.com/goscraper/goscraper/pkg/monitoring"
-	"github.com/goscraper/goscraper/pkg/queue"
+	"github.com/ramusaaa/goscraper/pkg/ai"
+	"github.com/ramusaaa/goscraper/pkg/browser"
+	"github.com/ramusaaa/goscraper/pkg/cache"
+	"github.com/ramusaaa/goscraper/pkg/cluster"
+	"github.com/ramusaaa/goscraper/pkg/monitoring"
+	"github.com/ramusaaa/goscraper/pkg/queue"
 	"go.uber.org/zap"
 )
 

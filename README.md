@@ -50,7 +50,7 @@ Modern, fast, and stealth web scraping library with anti-bot detection. Perfect 
 ## Kurulum
 
 ```bash
-go get github.com/yourname/goscraper
+go get github.com/ramusaaa/goscraper
 ```
 
 ## Hızlı Başlangıç
@@ -64,7 +64,7 @@ import (
     "fmt"
     "log"
     
-    "github.com/yourname/goscraper"
+    "github.com/ramusaaa/goscraper"
 )
 
 func main() {
