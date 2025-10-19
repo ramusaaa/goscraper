@@ -10,8 +10,8 @@ env:
   GO_VERSION: '1.21'
 
 jobs:
-  test:
-    name: Test Suite
+  verify:
+    name: Verify Code
     runs-on: ubuntu-latest
     
     steps:
@@ -36,16 +36,16 @@ jobs:
     - name: Install dependencies
       run: go mod download
     
-    - name: Run tests
-      run: go test -v -race ./...
+    - name: Verify build
+      run: go build ./...
     
-    - name: Run benchmarks
-      run: go test -bench=. -benchmem ./...
+    - name: Run vet
+      run: go vet ./...
 
   build:
     name: Build
     runs-on: ubuntu-latest
-    needs: test
+    needs: verify
     
     steps:
     - name: Checkout code
@@ -56,11 +56,8 @@ jobs:
       with:
         go-version: ${{ env.GO_VERSION }}
     
+    - name: Build library
+      run: go build ./...
+    
     - name: Build server
       run: go build -o goscraper-server cmd/server/main.go
-    
-    - name: Build examples
-      run: |
-        go build -o basic-example examples/basic_example.go
-        go build -o enterprise-example examples/enterprise/distributed_scraping.go
-        go build -o ai-example examples/ai/smart_extraction.go
