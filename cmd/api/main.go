@@ -1,13 +1,12 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"time"
 
-	"github.com/gorilla/mux"
+	"github.com/ramusaaa/routix"
 	"github.com/ramusaaa/goscraper"
 	"github.com/ramusaaa/goscraper/config"
 )
@@ -49,22 +48,28 @@ func NewAPIServer(cfg *config.Config) *APIServer {
 	}
 }
 
-func (s *APIServer) handleScrape(w http.ResponseWriter, r *http.Request) {
+func (s *APIServer) handleScrape(ctx *routix.Context) error {
 	var req ScrapeRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		s.sendError(w, "Invalid JSON", http.StatusBadRequest)
-		return
+	if err := ctx.ParseJSON(&req); err != nil {
+		return ctx.JSON(http.StatusBadRequest, ScrapeResponse{
+			Success: false,
+			Error:   "Invalid JSON",
+		})
 	}
 
 	if req.URL == "" {
-		s.sendError(w, "URL is required", http.StatusBadRequest)
-		return
+		return ctx.JSON(http.StatusBadRequest, ScrapeResponse{
+			Success: false,
+			Error:   "URL is required",
+		})
 	}
 
 	resp, err := s.scraper.Get(req.URL)
 	if err != nil {
-		s.sendError(w, err.Error(), http.StatusInternalServerError)
-		return
+		return ctx.JSON(http.StatusInternalServerError, ScrapeResponse{
+			Success: false,
+			Error:   err.Error(),
+		})
 	}
 
 	title := ""
@@ -74,69 +79,70 @@ func (s *APIServer) handleScrape(w http.ResponseWriter, r *http.Request) {
 		description, _ = resp.Document.Find("meta[name='description']").Attr("content")
 	}
 
-	s.sendSuccess(w, map[string]interface{}{
-		"title":       title,
-		"description": description,
-		"url":         resp.URL,
-		"status_code": resp.StatusCode,
-		"html":        resp.Body,
-		"load_time":   resp.LoadTime.String(),
+	return ctx.JSON(http.StatusOK, ScrapeResponse{
+		Success: true,
+		Data: map[string]interface{}{
+			"title":       title,
+			"description": description,
+			"url":         resp.URL,
+			"status_code": resp.StatusCode,
+			"html":        resp.Body,
+			"load_time":   resp.LoadTime.String(),
+		},
 	})
 }
 
-func (s *APIServer) handleSmartScrape(w http.ResponseWriter, r *http.Request) {
+func (s *APIServer) handleSmartScrape(ctx *routix.Context) error {
 	var req ScrapeRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		s.sendError(w, "Invalid JSON", http.StatusBadRequest)
-		return
+	if err := ctx.ParseJSON(&req); err != nil {
+		return ctx.JSON(http.StatusBadRequest, ScrapeResponse{
+			Success: false,
+			Error:   "Invalid JSON",
+		})
 	}
 
 	data, err := goscraper.SmartScrape(req.URL)
 	if err != nil {
-		s.sendError(w, err.Error(), http.StatusInternalServerError)
-		return
+		return ctx.JSON(http.StatusInternalServerError, ScrapeResponse{
+			Success: false,
+			Error:   err.Error(),
+		})
 	}
 
-	s.sendSuccess(w, data)
-}
-
-func (s *APIServer) handleHealth(w http.ResponseWriter, r *http.Request) {
-	s.sendSuccess(w, map[string]interface{}{
-		"status":     "healthy",
-		"time":       time.Now().Format(time.RFC3339),
-		"ai_enabled": s.config.AI.Enabled,
-		"version":    "1.0.0",
-	})
-}
-
-func (s *APIServer) handleConfig(w http.ResponseWriter, r *http.Request) {
-	safeConfig := map[string]interface{}{
-		"ai_enabled":    s.config.AI.Enabled,
-		"ai_provider":   s.config.AI.Provider,
-		"browser_engine": s.config.Browser.Engine,
-		"cache_enabled": s.config.Cache.Enabled,
-		"proxy_enabled": s.config.Proxy.Enabled,
-	}
-	
-	s.sendSuccess(w, safeConfig)
-}
-
-func (s *APIServer) sendSuccess(w http.ResponseWriter, data interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(ScrapeResponse{
+	return ctx.JSON(http.StatusOK, ScrapeResponse{
 		Success: true,
 		Data:    data,
 	})
 }
 
-func (s *APIServer) sendError(w http.ResponseWriter, message string, code int) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	json.NewEncoder(w).Encode(ScrapeResponse{
-		Success: false,
-		Error:   message,
+func (s *APIServer) handleHealth(ctx *routix.Context) error {
+	return ctx.JSON(http.StatusOK, ScrapeResponse{
+		Success: true,
+		Data: map[string]interface{}{
+			"status":     "healthy",
+			"time":       time.Now().Format(time.RFC3339),
+			"ai_enabled": s.config.AI.Enabled,
+			"version":    "1.0.0",
+		},
 	})
 }
+
+func (s *APIServer) handleConfig(ctx *routix.Context) error {
+	safeConfig := map[string]interface{}{
+		"ai_enabled":     s.config.AI.Enabled,
+		"ai_provider":    s.config.AI.Provider,
+		"browser_engine": s.config.Browser.Engine,
+		"cache_enabled":  s.config.Cache.Enabled,
+		"proxy_enabled":  s.config.Proxy.Enabled,
+	}
+	
+	return ctx.JSON(http.StatusOK, ScrapeResponse{
+		Success: true,
+		Data:    safeConfig,
+	})
+}
+
+
 
 func main() {
 	configPath := config.GetConfigPath()
@@ -158,33 +164,35 @@ func main() {
 
 	server := NewAPIServer(cfg)
 	
-	r := mux.NewRouter()
+	app := routix.New()
 	
-	r.HandleFunc("/api/scrape", server.handleScrape).Methods("POST")
-	r.HandleFunc("/api/smart-scrape", server.handleSmartScrape).Methods("POST")
-	r.HandleFunc("/health", server.handleHealth).Methods("GET")
-	r.HandleFunc("/config", server.handleConfig).Methods("GET")
-	
-	r.Use(func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Access-Control-Allow-Origin", "*")
-			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	corsMiddleware := func(next routix.Handler) routix.Handler {
+		return func(ctx *routix.Context) error {
+			ctx.SetHeader("Access-Control-Allow-Origin", "*")
+			ctx.SetHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+			ctx.SetHeader("Access-Control-Allow-Headers", "Content-Type")
 			
-			if r.Method == "OPTIONS" {
-				return
+			if ctx.Request.Method == "OPTIONS" {
+				return ctx.String(http.StatusOK, "")
 			}
 			
-			next.ServeHTTP(w, r)
-		})
-	})
+			return next(ctx)
+		}
+	}
+	
+	app.Use(corsMiddleware)
+	
+	app.POST("/api/scrape", server.handleScrape)
+	app.POST("/api/smart-scrape", server.handleSmartScrape)
+	app.GET("/health", server.handleHealth)
+	app.GET("/config", server.handleConfig)
 
 	addr := fmt.Sprintf("%s:%s", cfg.Server.Host, cfg.Server.Port)
 	fmt.Printf("Scraper API server starting on %s\n", addr)
 	
 	httpServer := &http.Server{
 		Addr:         addr,
-		Handler:      r,
+		Handler:      app,
 		ReadTimeout:  cfg.Server.ReadTimeout,
 		WriteTimeout: cfg.Server.WriteTimeout,
 	}

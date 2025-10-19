@@ -1,14 +1,14 @@
 module github.com/ramusaaa/goscraper
 
-go 1.21
+go 1.24
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.1
 	github.com/chromedp/chromedp v0.9.3
 	github.com/go-rod/rod v0.114.5
-	github.com/gorilla/mux v1.8.1
 	github.com/hashicorp/consul/api v1.25.1
 	github.com/prometheus/client_golang v1.17.0
+	github.com/ramusaaa/routix v0.3.8
 	github.com/redis/go-redis/v9 v9.3.0
 	github.com/segmentio/kafka-go v0.4.47
 	github.com/tidwall/gjson v1.17.0
