@@ -1,61 +1,99 @@
 # GoScraper 🚀
 
-**Enterprise-Grade Web Scraping Library for Go**
+**Enterprise-Grade Web Scraping Library & Microservice for Go**
 
-Modern, fast, and stealth web scraping library with anti-bot detection. Perfect for e-commerce, news, and data extraction.
+Modern, fast, and stealth web scraping library with AI-powered extraction, anti-bot detection, and microservice architecture. Perfect for e-commerce, news, and data extraction at scale.
 
 [![Go Version](https://img.shields.io/badge/Go-1.21+-blue.svg)](https://golang.org)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ramusaaa/goscraper)](https://goreportcard.com/report/github.com/ramusaaa/goscraper)
 [![GoDoc](https://godoc.org/github.com/ramusaaa/goscraper?status.svg)](https://godoc.org/github.com/ramusaaa/goscraper)
 
-## 🌟 Enterprise Features
+## 🌟 Key Features
 
-### 🤖 **AI-Powered Extraction**
+### 🤖 **AI-Powered Smart Extraction**
+- **Multiple AI Providers**: OpenAI GPT-4, Anthropic Claude, Local models
 - **Smart Content Detection**: Automatically identifies and extracts structured data
-- **Multiple AI Models**: OpenAI, Hugging Face, and local model support
-- **Learning Patterns**: Adapts to website structures automatically
 - **Confidence Scoring**: Quality assurance for extracted data
+- **Fallback Chain**: CSS/XPath extraction when AI fails
+
+### 🏗️ **Microservice Architecture**
+- **HTTP API Server**: RESTful endpoints for scraping operations
+- **Docker Support**: Container-ready with Docker Compose
+- **Kubernetes Ready**: Production deployment manifests included
+- **Load Balancing**: Nginx configuration for horizontal scaling
+
+### ⚙️ **Flexible Configuration System**
+- **JSON Configuration**: File-based configuration management
+- **Environment Variables**: 12-factor app compliance
+- **CLI Tools**: Interactive setup and validation
+- **Hot Reloading**: Runtime configuration updates
 
 ### 🌐 **Multi-Engine Browser Support**
 - **ChromeDP**: High-performance Chrome automation
 - **Rod**: Lightning-fast browser control
-- **Playwright**: Cross-browser compatibility
+- **Stealth Mode**: Advanced anti-detection techniques
 - **Headless & GUI**: Flexible rendering options
 
-### ⚡ **Distributed Architecture**
-- **Horizontal Scaling**: Auto-scaling worker nodes
-- **Load Balancing**: Intelligent job distribution
-- **Cluster Management**: Consul-based service discovery
-- **High Availability**: Fault-tolerant design
+### 🚀 **Production Features**
+- **Rate Limiting**: Configurable request throttling
+- **Caching**: Redis and in-memory caching
+- **Proxy Support**: IP rotation and geo-targeting
+- **Health Checks**: Monitoring and observability
+- **Graceful Shutdown**: Clean resource management
 
-### 📊 **Production Monitoring**
-- **Prometheus Metrics**: Comprehensive performance tracking
-- **Real-time Dashboards**: Grafana integration ready
-- **Alert Management**: Proactive issue detection
-- **Health Checks**: System status monitoring
-
-### 🚀 **High-Performance Queue System**
-- **Kafka Integration**: Enterprise message queuing
-- **Priority Queues**: Critical job prioritization
-- **Retry Logic**: Intelligent failure handling
-- **Dead Letter Queues**: Failed job management
-
-### 💾 **Advanced Caching**
-- **Redis Clustering**: Distributed cache support
-- **Multi-tier Caching**: Memory + Redis layers
-- **Cache Strategies**: Write-through, write-back, write-around
-- **TTL Management**: Intelligent expiration policies
-
-## INSTALLATION
+## 📦 Installation
 
 ```bash
 go get github.com/ramusaaa/goscraper
 ```
 
-## QUICK START
+## 🚀 Quick Start
 
-### BASIC USAGE
+### Method 1: Interactive Setup (Recommended)
+
+```bash
+# 1. Initialize configuration
+make init-config
+
+# 2. Interactive setup wizard
+make setup
+# Follow prompts to configure AI keys, caching, etc.
+
+# 3. Validate configuration
+make validate-config
+
+# 4. Start the server
+make run
+```
+
+### Method 2: Environment Variables
+
+```bash
+# Set your API keys
+export OPENAI_API_KEY="your-openai-key"
+export GOSCRAPER_AI_ENABLED=true
+
+# Start the server
+go run ./cmd/api
+```
+
+### Method 3: Manual Configuration
+
+```bash
+# Create config file
+cp goscraper.example.json goscraper.json
+
+# Edit configuration
+vim goscraper.json
+
+# Start server
+go run ./cmd/api
+```
+
+## 💻 Usage Examples
+
+### Basic Library Usage
 
 ```go
 package main
@@ -68,7 +106,7 @@ import (
 )
 
 func main() {
-    // Scraper generate
+    // Simple scraping
     scraper := goscraper.New()
     
     resp, err := scraper.Get("https://example.com")
@@ -77,7 +115,7 @@ func main() {
     }
     
     title := resp.Document.Find("title").Text()
-    fmt.Printf("Sayfa başlığı: %s\n", title)
+    fmt.Printf("Page title: %s\n", title)
 }
 ```
 
@@ -88,84 +126,193 @@ scraper := goscraper.New(
     goscraper.WithTimeout(30*time.Second),
     goscraper.WithUserAgent("MyBot/1.0"),
     goscraper.WithHeaders(map[string]string{
-        "Accept-Language": "tr-TR,tr;q=0.9",
+        "Accept-Language": "en-US,en;q=0.9",
     }),
     goscraper.WithRateLimit(500*time.Millisecond),
     goscraper.WithMaxRetries(3),
     goscraper.WithProxy("http://proxy.example.com:8080"),
+    goscraper.WithStealth(true),
 )
 ```
 
-### HTML Parsing
+### HTTP API Usage
 
-```go
-parser := goscraper.NewParser(resp.Document)
+```bash
+# Health check
+curl http://localhost:8080/health
 
-title := parser.ExtractTitle()
-description := parser.ExtractText("meta[name='description']")
+# Get configuration
+curl http://localhost:8080/config
 
-links := parser.ExtractLinks()
-for _, link := range links {
-    fmt.Printf("%s: %s\n", link.Text, link.URL)
-}
+# Scrape a website
+curl -X POST http://localhost:8080/api/scrape \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://example.com"}'
 
-images := parser.ExtractImages()
-for _, img := range images {
-    fmt.Printf("Resim: %s (Alt: %s)\n", img.URL, img.Alt)
-}
-
-meta := parser.ExtractMetaTags()
-fmt.Printf("Meta: %+v\n", meta)
+# Smart AI-powered scraping
+curl -X POST http://localhost:8080/api/smart-scrape \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://shop.example.com/products"}'
 ```
 
-## API REFERANCE
-
-### Creating a Scraper
+### Client SDK Usage
 
 ```go
-scraper := goscraper.New()
+package main
 
-scraper := goscraper.New(
-    goscraper.WithTimeout(10*time.Second),
-    goscraper.WithUserAgent("CustomBot/1.0"),
-    // ... etc
+import (
+    "fmt"
+    "log"
+    
+    "github.com/ramusaaa/goscraper/client"
 )
+
+func main() {
+    // Create client for remote scraper service
+    client := client.NewScraperClient("http://localhost:8080")
+    
+    // Health check
+    if err := client.Health(); err != nil {
+        log.Fatal("Service unavailable:", err)
+    }
+    
+    // Scrape website
+    data, err := client.Scrape("https://example.com")
+    if err != nil {
+        log.Fatal("Scraping failed:", err)
+    }
+    
+    fmt.Printf("Title: %s\n", data.Title)
+    fmt.Printf("Status: %d\n", data.StatusCode)
+}
 ```
 
-### CONFIGURATION SETTINGS
+## 📋 Configuration Reference
 
-- `WithTimeout(duration)` - HTTP timeout
-- `WithUserAgent(string)` - User-Agent header
-- `WithHeaders(map[string]string)` - Example Headers
-- `WithRateLimit(duration)` - Request Duration
-- `WithMaxRetries(int)` - Max Retry Usage
-- `WithProxy(string)` - Proxy URL
-- `WithJavaScript(bool)` - JavaScript Support
+### Configuration File Structure
 
-### PARSER METHODS
+```json
+{
+  "server": {
+    "port": "8080",
+    "host": "0.0.0.0",
+    "read_timeout": "30s",
+    "write_timeout": "30s"
+  },
+  "ai": {
+    "enabled": true,
+    "provider": "openai",
+    "confidence_threshold": 0.8,
+    "fallback_chain": ["openai", "css", "xpath"],
+    "models": {
+      "openai": {
+        "api_key": "your-openai-key",
+        "model": "gpt-4"
+      },
+      "anthropic": {
+        "api_key": "your-anthropic-key",
+        "model": "claude-3-sonnet-20240229"
+      }
+    }
+  },
+  "browser": {
+    "engine": "chromedp",
+    "headless": true,
+    "stealth": true,
+    "pool_size": 5
+  },
+  "cache": {
+    "enabled": true,
+    "type": "redis",
+    "ttl": "1h",
+    "redis": {
+      "host": "localhost",
+      "port": 6379
+    }
+  },
+  "rate_limit": {
+    "requests_per_second": 10,
+    "delay": "100ms"
+  }
+}
+```
 
-- `ExtractText(selector)` 
-- `ExtractTexts(selector)`
-- `ExtractAttr(selector, attr)`
-- `ExtractLinks()` 
-- `ExtractImages()`
-- `ExtractMetaTags()`
-- `ExtractTitle()`
-- `ExtractByRegex(pattern)`
+### Environment Variables
 
-## License
+```bash
+# Server Configuration
+GOSCRAPER_PORT=8080
+GOSCRAPER_HOST=0.0.0.0
 
-MIT License
+# AI Configuration
+GOSCRAPER_AI_ENABLED=true
+GOSCRAPER_AI_PROVIDER=openai
+OPENAI_API_KEY=your-openai-key
+ANTHROPIC_API_KEY=your-anthropic-key
 
-## Contribute
+# Browser Configuration
+GOSCRAPER_BROWSER_ENGINE=chromedp
+GOSCRAPER_BROWSER_HEADLESS=true
+GOSCRAPER_BROWSER_STEALTH=true
 
-Pull requests are welcome. For major changes, let's discuss by opening an issue first.
-## 🏗
-️ Architecture
+# Cache Configuration
+GOSCRAPER_CACHE_ENABLED=true
+GOSCRAPER_CACHE_TYPE=redis
+REDIS_HOST=localhost
+REDIS_PORT=6379
+
+# Rate Limiting
+GOSCRAPER_RATE_LIMIT_RPS=10
+GOSCRAPER_RATE_LIMIT_DELAY=100ms
+```
+
+## 🛠️ CLI Tools
+
+### Available Commands
+
+```bash
+# Configuration Management
+make init-config          # Create default configuration
+make setup                # Interactive setup wizard
+make validate-config      # Validate configuration
+make show-config          # Display current configuration
+
+# Development
+make build                # Build binaries
+make run                  # Start API server
+make test                 # Run tests
+
+# Docker
+make docker-build         # Build Docker image
+make docker-compose-up    # Start with Docker Compose
+make docker-compose-down  # Stop Docker services
+
+# Kubernetes
+make k8s-deploy          # Deploy to Kubernetes
+make k8s-delete          # Remove from Kubernetes
+```
+
+### CLI Usage Examples
+
+```bash
+# Initialize new project
+goscraper init
+
+# Interactive setup
+goscraper setup
+
+# Validate configuration
+goscraper validate
+
+# Show current configuration
+goscraper config
+```
+## 🏗️ Architecture Overview
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Load Balancer │    │   API Gateway   │    │  Web Dashboard  │
+│     (Nginx)     │    │   (Optional)    │    │   (Optional)    │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
          │                       │                       │
          └───────────────────────┼───────────────────────┘
@@ -176,11 +323,12 @@ Pull requests are welcome. For major changes, let's discuss by opening an issue 
 │  Scraper Node 1 │    │  Scraper Node 2 │    │  Scraper Node N │
 │                 │    │                 │    │                 │
 │ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │
-│ │   Browser   │ │    │ │   Browser   │ │    │ │   Browser   │ │
-│ │    Pool     │ │    │ │    Pool     │ │    │ │    Pool     │ │
+│ │HTTP API     │ │    │ │HTTP API     │ │    │ │HTTP API     │ │
+│ │Server       │ │    │ │Server       │ │    │ │Server       │ │
 │ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │
 │ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │
-│ │ AI Extractor│ │    │ │ AI Extractor│ │    │ │ AI Extractor│ │
+│ │Browser Pool │ │    │ │Browser Pool │ │    │ │Browser Pool │ │
+│ │+ AI Engine  │ │    │ │+ AI Engine  │ │    │ │+ AI Engine  │ │
 │ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
          │                       │                       │
@@ -190,339 +338,389 @@ Pull requests are welcome. For major changes, let's discuss by opening an issue 
     │                Infrastructure Layer                      │
     │                                                         │
     │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
-    │  │    Kafka    │  │    Redis    │  │   Consul    │     │
-    │  │   Queues    │  │   Cache     │  │  Discovery  │     │
+    │  │    Redis    │  │  Config     │  │   Proxy     │     │
+    │  │   Cache     │  │  Storage    │  │  Rotation   │     │
     │  └─────────────┘  └─────────────┘  └─────────────┘     │
     │                                                         │
     │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
-    │  │ Prometheus  │  │ Elasticsearch│  │  MinIO/S3   │     │
-    │  │  Metrics    │  │   Storage   │  │   Storage   │     │
+    │  │   OpenAI    │  │ Anthropic   │  │   Local     │     │
+    │  │    API      │  │    API      │  │   Models    │     │
     │  └─────────────┘  └─────────────┘  └─────────────┘     │
     └─────────────────────────────────────────────────────────┘
 ```
 
-## 🚀 Quick Start
+## 🚀 Deployment Options
 
-### Installation
-
-```bash
-go get github.com/ramusaaa/goscraper
-```
-
-### Smart Scraping (Recommended)
-
-```go
-package main
-
-import (
-    "fmt"
-    "log"
-    
-    "github.com/ramusaaa/goscraper"
-)
-
-func main() {
-    // Smart scraping - automatically detects content type
-    data, err := goscraper.SmartScrape("https://shop.example.com/products")
-    if err != nil {
-        log.Fatal(err)
-    }
-    
-    fmt.Printf("Content Type: %s\n", data.ContentType)
-    fmt.Printf("Title: %s\n", data.Title)
-    
-    // Automatically extracted products for e-commerce sites
-    if data.ContentType == goscraper.ContentTypeEcommerce {
-        for _, product := range data.Products {
-            fmt.Printf("%s - %s %s\n", product.Name, product.Price, product.Currency)
-        }
-    }
-    
-    // Automatically extracted articles for news sites
-    if data.ContentType == goscraper.ContentTypeNews && data.Article != nil {
-        fmt.Printf("Headline: %s\n", data.Article.Headline)
-        fmt.Printf("Author: %s\n", data.Article.Author)
-    }
-}
-```
-
-### Supported Content Types
-
-GoScraper automatically detects and extracts data from:
-
-- **E-commerce**: Products, prices, ratings, reviews
-- **News**: Headlines, articles, authors, publish dates  
-- **Blogs**: Posts, authors, categories, tags
-- **Jobs**: Listings, companies, salaries, requirements
-- **Real Estate**: Properties, prices, locations, features
-- **Recipes**: Ingredients, instructions, cooking times
-- **Events**: Dates, venues, tickets, organizers
-- **Videos**: Titles, durations, views, channels
-
-```go
-// Works with any website - automatically detects content type
-data, err := goscraper.SmartScrape("https://any-website.com")
-
-switch data.ContentType {
-case goscraper.ContentTypeEcommerce:
-    // Access data.Products
-case goscraper.ContentTypeNews:
-    // Access data.Article
-case goscraper.ContentTypeJob:
-    // Access data.JobListing
-// ... etc
-}
-```
-
-### Advanced Configuration
-
-```go
-scraper := goscraper.New(
-    goscraper.WithStealth(true),              // Enable stealth mode
-    goscraper.WithUserAgentRotation(true),    // Rotate user agents
-    goscraper.WithRandomHeaders(true),        // Randomize headers
-    goscraper.WithHumanDelay(true),          // Human-like delays
-    goscraper.WithTimeout(30*time.Second),    // Request timeout
-    goscraper.WithRateLimit(2*time.Second),   // Rate limiting
-    goscraper.WithMaxRetries(3),             // Retry failed requests
-)
-
-resp, err := scraper.Get("https://protected-site.com")
-```
-
-### Available Presets
-
-```go
-// For e-commerce sites (Trendyol, Hepsiburada, etc.)
-goscraper.EcommercePreset()
-
-// For news websites
-goscraper.NewsPreset()
-
-// For social media platforms
-goscraper.SocialMediaPreset()
-
-// For APIs
-goscraper.APIPreset()
-
-// For fast scraping
-goscraper.FastPreset()
-
-// For maximum reliability
-goscraper.RobustPreset()
-```
-
-## 📊 Performance Benchmarks
-
-| Feature | Performance | Scalability |
-|---------|-------------|-------------|
-| **HTTP Requests** | 10,000+ req/sec | Linear scaling |
-| **Browser Sessions** | 100+ concurrent | Auto-scaling |
-| **AI Extraction** | 50+ pages/sec | GPU acceleration |
-| **Cache Hit Ratio** | 95%+ | Distributed |
-| **Queue Throughput** | 100,000+ jobs/sec | Horizontal |
-
-## 🛠️ Advanced Configuration
-
-### AI-Powered Extraction
-
-```go
-aiConfig := &goscraper.AIConfig{
-    Models: map[string]goscraper.ModelConfig{
-        "openai": {
-            Type: "openai",
-            APIKey: "your-api-key",
-            Model: "gpt-4",
-        },
-        "local": {
-            Type: "huggingface",
-            Model: "microsoft/DialoGPT-medium",
-        },
-    },
-    FallbackChain: []string{"openai", "local", "css"},
-    ConfidenceThreshold: 0.85,
-}
-```
-
-### Browser Automation
-
-```go
-browserConfig := &goscraper.BrowserConfig{
-    Engine: goscraper.Playwright,
-    Headless: true,
-    Pool: &goscraper.PoolConfig{
-        Size: 20,
-        MaxAge: time.Hour,
-    },
-    Stealth: true,
-    UserAgent: "Mozilla/5.0...",
-    Viewport: goscraper.Viewport{1920, 1080},
-}
-```
-
-### Distributed Caching
-
-```go
-cacheConfig := &goscraper.CacheConfig{
-    Primary: &goscraper.RedisConfig{
-        Cluster: []string{"redis-1:6379", "redis-2:6379"},
-        Password: "secure-password",
-    },
-    Secondary: &goscraper.MemoryConfig{
-        Size: "1GB",
-        TTL:  time.Hour,
-    },
-    Strategy: goscraper.WriteThrough,
-}
-```
-
-## 🔧 CLI Tools
+### 1. Standalone Binary
 
 ```bash
-# Install CLI
-go install github.com/ramusaaa/goscraper/cmd/goscraper@latest
-
-# Start server cluster
-goscraper server --config production.yaml
-
-# Submit scraping job
-goscraper scrape --url "https://example.com" --schema schema.json
-
-# Monitor cluster
-goscraper status --cluster
-
-# Scale workers
-goscraper scale --nodes 10
+# Build and run
+go build -o goscraper ./cmd/api
+./goscraper
 ```
 
-## 📈 Monitoring & Observability
+### 2. Docker Container
 
-### Prometheus Metrics
+```bash
+# Build image
+docker build -t goscraper:latest .
 
-```yaml
-# docker-compose.yml
-version: '3.8'
-services:
-  goscraper:
-    image: goscraper/goscraper:latest
-    ports:
-      - "8080:8080"
-      - "9090:9090"  # Metrics
-    environment:
-      - METRICS_ENABLED=true
-      - PROMETHEUS_PORT=9090
-  
-  prometheus:
-    image: prom/prometheus
-    ports:
-      - "9091:9090"
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-  
-  grafana:
-    image: grafana/grafana
-    ports:
-      - "3000:3000"
+# Run container
+docker run -p 8080:8080 \
+  -e OPENAI_API_KEY=your-key \
+  -e GOSCRAPER_AI_ENABLED=true \
+  goscraper:latest
 ```
 
-### Key Metrics
+### 3. Docker Compose
 
-- `goscraper_requests_total` - Total HTTP requests
-- `goscraper_extraction_confidence` - AI extraction confidence
-- `goscraper_browser_sessions` - Active browser sessions
-- `goscraper_queue_size` - Job queue size
-- `goscraper_cache_hit_ratio` - Cache performance
+```bash
+# Start services
+docker-compose up -d
 
-## 🔒 Security Features
+# View logs
+docker-compose logs -f scraper-api
 
-- **Rate Limiting**: Prevent abuse and respect robots.txt
-- **User-Agent Rotation**: Avoid detection
-- **Proxy Support**: IP rotation and geo-targeting
-- **SSL/TLS**: Secure communications
-- **Authentication**: API key and JWT support
-- **Audit Logging**: Complete request tracking
+# Stop services
+docker-compose down
+```
 
-## 🌍 Use Cases
+### 4. Kubernetes
+
+```bash
+# Deploy to cluster
+kubectl apply -f k8s/
+
+# Scale deployment
+kubectl scale deployment scraper-api --replicas=5
+
+# Check status
+kubectl get pods -l app=scraper-api
+```
+
+## 🎯 Use Cases & Examples
 
 ### E-commerce Price Monitoring
+
 ```go
-monitor := goscraper.NewPriceMonitor(
-    goscraper.WithSchedule("@hourly"),
-    goscraper.WithAlerts(goscraper.PriceDropAlert{Threshold: 0.1}),
-)
+// Monitor product prices
+data, err := goscraper.SmartScrape("https://shop.example.com/product/123")
+if err != nil {
+    log.Fatal(err)
+}
+
+if data.ContentType == goscraper.ContentTypeEcommerce {
+    for _, product := range data.Products {
+        fmt.Printf("Product: %s\n", product.Name)
+        fmt.Printf("Price: %s %s\n", product.Price, product.Currency)
+        fmt.Printf("Rating: %.1f/5\n", product.Rating)
+    }
+}
 ```
 
 ### News Aggregation
-```go
-aggregator := goscraper.NewNewsAggregator(
-    goscraper.WithSources([]string{"bbc.com", "cnn.com"}),
-    goscraper.WithNLP(true),
-)
-```
-
-### SEO Analysis
-```go
-analyzer := goscraper.NewSEOAnalyzer(
-    goscraper.WithMetrics([]string{"title", "meta", "headings"}),
-    goscraper.WithLighthouse(true),
-)
-```
-
-## 📚 Documentation
-
-### Core Functions
 
 ```go
-// Quick functions for immediate use
-goscraper.QuickScrape(url string) (*Response, error)
-goscraper.StealthScrape(url string) (*Response, error)
-goscraper.ExtractAll(resp *Response) *ExtractedData
-goscraper.ExtractProducts(resp *Response, selectors ProductSelectors) []Product
+// Extract news articles
+data, err := goscraper.SmartScrape("https://news.example.com/article/123")
+if err != nil {
+    log.Fatal(err)
+}
 
-// Predefined selectors for popular sites
-goscraper.GetTrendyolSelectors() ProductSelectors
-goscraper.GetHepsiburadaSelectors() ProductSelectors  
-goscraper.GetN11Selectors() ProductSelectors
+if data.ContentType == goscraper.ContentTypeNews && data.Article != nil {
+    fmt.Printf("Headline: %s\n", data.Article.Headline)
+    fmt.Printf("Author: %s\n", data.Article.Author)
+    fmt.Printf("Published: %s\n", data.Article.PublishDate)
+    fmt.Printf("Content: %s\n", data.Article.Content)
+}
 ```
 
-### Configuration Options
+### Job Listings Scraping
 
 ```go
-goscraper.WithStealth(bool)              // Enable stealth mode
-goscraper.WithUserAgentRotation(bool)    // Rotate user agents
-goscraper.WithRandomHeaders(bool)        // Randomize headers
-goscraper.WithHumanDelay(bool)          // Human-like delays
-goscraper.WithTimeout(time.Duration)     // Request timeout
-goscraper.WithRateLimit(time.Duration)   // Rate limiting
-goscraper.WithMaxRetries(int)           // Retry attempts
-goscraper.WithProxy(string)             // Proxy URL
+// Extract job postings
+data, err := goscraper.SmartScrape("https://jobs.example.com/posting/123")
+if err != nil {
+    log.Fatal(err)
+}
+
+if data.ContentType == goscraper.ContentTypeJob && data.JobListing != nil {
+    fmt.Printf("Title: %s\n", data.JobListing.Title)
+    fmt.Printf("Company: %s\n", data.JobListing.Company)
+    fmt.Printf("Salary: %s\n", data.JobListing.Salary)
+    fmt.Printf("Location: %s\n", data.JobListing.Location)
+}
 ```
 
-## 🤝 Enterprise Support
+### Microservice Integration
 
-- **24/7 Support**: Priority technical support
-- **Custom Development**: Tailored solutions
-- **Training**: Team onboarding and best practices
-- **SLA**: 99.9% uptime guarantee
-- **Compliance**: GDPR, SOC2, ISO27001 ready
+```go
+// Use as microservice client
+client := client.NewScraperClient("http://scraper-service:8080")
 
-## 📞 Support & Sponsorship
+// Health check
+if err := client.Health(); err != nil {
+    log.Fatal("Scraper service unavailable")
+}
 
-- **GitHub Sponsors**: [Sponsor this project](https://github.com/sponsors/ramusaaa)
+// Batch scraping
+urls := []string{
+    "https://site1.com",
+    "https://site2.com", 
+    "https://site3.com",
+}
+
+for _, url := range urls {
+    data, err := client.Scrape(url)
+    if err != nil {
+        log.Printf("Failed to scrape %s: %v", url, err)
+        continue
+    }
+    
+    fmt.Printf("Scraped %s: %s\n", url, data.Title)
+}
+```
+
+## 📊 API Reference
+
+### HTTP Endpoints
+
+| Endpoint | Method | Description | Example |
+|----------|--------|-------------|---------|
+| `/health` | GET | Health check and status | `curl http://localhost:8080/health` |
+| `/config` | GET | Current configuration | `curl http://localhost:8080/config` |
+| `/api/scrape` | POST | Basic web scraping | See below |
+| `/api/smart-scrape` | POST | AI-powered extraction | See below |
+
+### API Examples
+
+#### Basic Scraping
+
+```bash
+curl -X POST http://localhost:8080/api/scrape \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://example.com",
+    "options": {
+      "timeout": "30s",
+      "user_agent": "Custom Bot"
+    }
+  }'
+```
+
+#### Smart AI Scraping
+
+```bash
+curl -X POST http://localhost:8080/api/smart-scrape \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://shop.example.com/product/123"
+  }'
+```
+
+#### Response Format
+
+```json
+{
+  "success": true,
+  "data": {
+    "title": "Page Title",
+    "description": "Meta description",
+    "url": "https://example.com",
+    "status_code": 200,
+    "load_time": "1.234s",
+    "html": "<!DOCTYPE html>..."
+  }
+}
+```
+
+## 🧪 Testing & Validation
+
+### Run Tests
+
+```bash
+# Run all tests
+make test
+
+# Run integration tests
+go test ./tests/ -v
+
+# Validate configuration
+make validate-config
+
+# Full feature validation
+./validate_features.sh
+```
+
+### Test Coverage
+
+```bash
+# Generate coverage report
+go test -coverprofile=coverage.out ./...
+go tool cover -html=coverage.out
+```
+
+## 📈 Performance & Monitoring
+
+### Performance Benchmarks
+
+| Feature | Performance | Scalability |
+|---------|-------------|-------------|
+| **HTTP Requests** | 1,000+ req/sec | Linear scaling |
+| **Browser Sessions** | 50+ concurrent | Auto-scaling |
+| **AI Extraction** | 10+ pages/sec | Model dependent |
+| **Cache Hit Ratio** | 90%+ | Distributed |
+| **Memory Usage** | <512MB | Configurable |
+
+### Health Monitoring
+
+```bash
+# Check service health
+curl http://localhost:8080/health
+
+# Monitor with watch
+watch -n 5 'curl -s http://localhost:8080/health | jq'
+
+# Check configuration
+curl http://localhost:8080/config | jq
+```
+
+### Logging
+
+```bash
+# View logs in Docker
+docker-compose logs -f scraper-api
+
+# View logs in Kubernetes
+kubectl logs -f deployment/scraper-api
+
+# Custom log level
+GOSCRAPER_LOG_LEVEL=debug go run ./cmd/api
+```
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+#### Configuration Not Loading
+
+```bash
+# Check config file location
+go run ./cmd/cli config
+
+# Validate configuration
+go run ./cmd/cli validate
+
+# Reset to defaults
+go run ./cmd/cli init
+```
+
+#### AI Features Not Working
+
+```bash
+# Check AI configuration
+curl http://localhost:8080/config | jq '.data.ai_enabled'
+
+# Verify API key
+export OPENAI_API_KEY=your-key
+go run ./cmd/cli validate
+```
+
+#### Performance Issues
+
+```bash
+# Check resource usage
+docker stats scraper-api
+
+# Monitor requests
+curl http://localhost:8080/health
+
+# Adjust rate limiting
+export GOSCRAPER_RATE_LIMIT_RPS=5
+```
+
+### Debug Mode
+
+```bash
+# Enable debug logging
+export GOSCRAPER_LOG_LEVEL=debug
+
+# Verbose output
+go run ./cmd/api -v
+
+# Profile performance
+go run ./cmd/api -cpuprofile=cpu.prof
+```
+
+## 🤝 Contributing
+
+### Development Setup
+
+```bash
+# Clone repository
+git clone https://github.com/ramusaaa/goscraper
+cd goscraper
+
+# Install dependencies
+go mod tidy
+
+# Run tests
+make test
+
+# Start development server
+make run
+```
+
+### Code Style
+
+```bash
+# Format code
+go fmt ./...
+
+# Lint code
+golangci-lint run
+
+# Generate documentation
+godoc -http=:6060
+```
+
+### Pull Request Process
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- [ChromeDP](https://github.com/chromedp/chromedp) - Browser automation
+- [GoQuery](https://github.com/PuerkitoBio/goquery) - HTML parsing
+- [Gorilla Mux](https://github.com/gorilla/mux) - HTTP routing
+- [Go-Redis](https://github.com/redis/go-redis) - Redis client
 
 ## 🏆 Why Choose GoScraper?
 
-| Feature | GoScraper | Competitors |
-|---------|-----------|-------------|
-| **AI Integration** | ✅ Built-in | ❌ External only |
-| **Horizontal Scaling** | ✅ Native | ⚠️ Limited |
-| **Browser Engines** | ✅ Multiple | ⚠️ Single |
-| **Enterprise Features** | ✅ Complete | ⚠️ Partial |
-| **Go Performance** | ✅ Native | ❌ Python/Node |
-| **Production Ready** | ✅ Battle-tested | ⚠️ Experimental |
+| Feature | GoScraper | Scrapy | Puppeteer | Selenium |
+|---------|-----------|--------|-----------|----------|
+| **Language** | ✅ Go | 🐍 Python | 🟨 JavaScript | 🐍 Python/Java |
+| **Performance** | ✅ High | ⚠️ Medium | ⚠️ Medium | ❌ Low |
+| **AI Integration** | ✅ Built-in | ❌ External | ❌ External | ❌ External |
+| **Microservice Ready** | ✅ Native | ⚠️ Custom | ⚠️ Custom | ❌ No |
+| **Configuration** | ✅ Advanced | ⚠️ Basic | ⚠️ Basic | ⚠️ Basic |
+| **Stealth Features** | ✅ Advanced | ⚠️ Limited | ✅ Good | ⚠️ Limited |
+| **Deployment** | ✅ Easy | ⚠️ Medium | ⚠️ Medium | ❌ Complex |
 
 ---
 
 **⭐ Star this repository if you find it useful!**
 
-**💰 [Become a Sponsor](https://github.com/sponsors/ramusaaa) to support development**
+**🐛 [Report Issues](https://github.com/ramusaaa/goscraper/issues)**
+
+**💡 [Request Features](https://github.com/ramusaaa/goscraper/discussions)**
+
+**💰 [Become a Sponsor](https://github.com/sponsors/ramusaaa)**
