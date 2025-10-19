@@ -1,0 +1,62 @@
+{
+  "server": {
+    "port": "8080",
+    "host": "0.0.0.0",
+    "read_timeout": "30s",
+    "write_timeout": "30s"
+  },
+  "ai": {
+    "enabled": true,
+    "provider": "openai",
+    "confidence_threshold": 0.8,
+    "fallback_chain": ["openai", "anthropic", "css"],
+    "models": {
+      "openai": {
+        "api_key": "YOUR_OPENAI_API_KEY_HERE",
+        "model": "gpt-4",
+        "endpoint": "https://api.openai.com/v1"
+      },
+      "anthropic": {
+        "api_key": "YOUR_ANTHROPIC_API_KEY_HERE", 
+        "model": "claude-3-sonnet-20240229",
+        "endpoint": "https://api.anthropic.com/v1"
+      },
+      "local": {
+        "api_key": "",
+        "model": "llama2",
+        "endpoint": "http://localhost:11434/v1"
+      }
+    }
+  },
+  "browser": {
+    "engine": "chromedp",
+    "headless": true,
+    "stealth": true,
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "pool_size": 5
+  },
+  "cache": {
+    "enabled": true,
+    "type": "redis",
+    "ttl": "1h",
+    "redis": {
+      "host": "localhost",
+      "port": 6379,
+      "password": "",
+      "db": 0
+    }
+  },
+  "proxy": {
+    "enabled": false,
+    "rotation": true,
+    "urls": [
+      "http://proxy1.example.com:8080",
+      "http://proxy2.example.com:8080"
+    ]
+  },
+  "rate_limit": {
+    "requests_per_second": 10,
+    "burst_size": 20,
+    "delay": "100ms"
+  }
+}
