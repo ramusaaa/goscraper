@@ -82,6 +82,6 @@ GoScraper provides detailed error information and automatic retry mechanisms:
 		goscraper.WithRetryDelay(time.Second),
 	)
 
-For more examples and documentation, visit: https://github.com/goscraper/goscraper
+For more examples and documentation, visit: https://github.com/ramusaaa/goscraper
 */
 package goscraper

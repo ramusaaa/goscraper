@@ -31,7 +31,7 @@ func NewsPreset() []Option {
 		WithTimeout(30 * time.Second),
 		WithRateLimit(2 * time.Second),
 		WithMaxRetries(2),
-		WithUserAgent("GoScraper-NewsBot/1.0 (+https://github.com/goscraper/goscraper)"),
+		WithUserAgent("GoScraper-NewsBot/1.0 (+https://github.com/ramusaaa/goscraper)"),
 	}
 }
 

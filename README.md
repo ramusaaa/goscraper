@@ -6,8 +6,8 @@ Modern, fast, and stealth web scraping library with anti-bot detection. Perfect 
 
 [![Go Version](https://img.shields.io/badge/Go-1.21+-blue.svg)](https://golang.org)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Go Report Card](https://goreportcard.com/badge/github.com/goscraper/goscraper)](https://goreportcard.com/report/github.com/goscraper/goscraper)
-[![GoDoc](https://godoc.org/github.com/goscraper/goscraper?status.svg)](https://godoc.org/github.com/goscraper/goscraper)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ramusaaa/goscraper)](https://goreportcard.com/report/github.com/ramusaaa/goscraper)
+[![GoDoc](https://godoc.org/github.com/ramusaaa/goscraper?status.svg)](https://godoc.org/github.com/ramusaaa/goscraper)
 
 ## 🌟 Enterprise Features
 
@@ -219,7 +219,7 @@ Pull request'ler memnuniyetle karşılanır. Büyük değişiklikler için önce
 ### Installation
 
 ```bash
-go get github.com/goscraper/goscraper
+go get github.com/ramusaaa/goscraper
 ```
 
 ### Smart Scraping (Recommended)
@@ -231,7 +231,7 @@ import (
     "fmt"
     "log"
     
-    "github.com/goscraper/goscraper"
+    "github.com/ramusaaa/goscraper"
 )
 
 func main() {
@@ -393,7 +393,7 @@ cacheConfig := &goscraper.CacheConfig{
 
 ```bash
 # Install CLI
-go install github.com/goscraper/goscraper/cmd/goscraper@latest
+go install github.com/ramusaaa/goscraper/cmd/goscraper@latest
 
 # Start server cluster
 goscraper server --config production.yaml
