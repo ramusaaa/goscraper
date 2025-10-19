@@ -15,7 +15,7 @@ Thank you for your interest in contributing to GoScraper! This document provides
 1. Fork the repository
 2. Clone your fork:
    ```bash
-   git clone https://github.com/yourusername/goscraper.git
+   git clone https://github.com/ramusaaa/goscraper.git
    cd goscraper
    ```
 
