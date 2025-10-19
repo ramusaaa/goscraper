@@ -47,15 +47,15 @@ Modern, fast, and stealth web scraping library with anti-bot detection. Perfect 
 - **Cache Strategies**: Write-through, write-back, write-around
 - **TTL Management**: Intelligent expiration policies
 
-## Kurulum
+## INSTALLATION
 
 ```bash
 go get github.com/ramusaaa/goscraper
 ```
 
-## Hızlı Başlangıç
+## QUICK START
 
-### Basit Kullanım
+### BASIC USAGE
 
 ```go
 package main
@@ -68,22 +68,20 @@ import (
 )
 
 func main() {
-    // Scraper oluştur
+    // Scraper generate
     scraper := goscraper.New()
     
-    // Web sayfasını scrape et
     resp, err := scraper.Get("https://example.com")
     if err != nil {
         log.Fatal(err)
     }
     
-    // Başlığı çıkar
     title := resp.Document.Find("title").Text()
     fmt.Printf("Sayfa başlığı: %s\n", title)
 }
 ```
 
-### Gelişmiş Konfigürasyon
+### Advanced Configuration
 
 ```go
 scraper := goscraper.New(
@@ -101,78 +99,67 @@ scraper := goscraper.New(
 ### HTML Parsing
 
 ```go
-// Parser oluştur
 parser := goscraper.NewParser(resp.Document)
 
-// Text çıkar
 title := parser.ExtractTitle()
 description := parser.ExtractText("meta[name='description']")
 
-// Tüm linkleri çıkar
 links := parser.ExtractLinks()
 for _, link := range links {
     fmt.Printf("%s: %s\n", link.Text, link.URL)
 }
 
-// Attribute'ları çıkar
 images := parser.ExtractImages()
 for _, img := range images {
     fmt.Printf("Resim: %s (Alt: %s)\n", img.URL, img.Alt)
 }
 
-// Meta tag'leri çıkar
 meta := parser.ExtractMetaTags()
 fmt.Printf("Meta: %+v\n", meta)
 ```
 
-## API Referansı
+## API REFERANCE
 
-### Scraper Oluşturma
+### Creating a Scraper
 
 ```go
-// Varsayılan ayarlarla
 scraper := goscraper.New()
 
-// Özel ayarlarla
 scraper := goscraper.New(
     goscraper.WithTimeout(10*time.Second),
     goscraper.WithUserAgent("CustomBot/1.0"),
-    // ... diğer seçenekler
+    // ... etc
 )
 ```
 
-### Konfigürasyon Seçenekleri
+### CONFIGURATION SETTINGS
 
 - `WithTimeout(duration)` - HTTP timeout
 - `WithUserAgent(string)` - User-Agent header
-- `WithHeaders(map[string]string)` - Özel header'lar
-- `WithRateLimit(duration)` - İstekler arası bekleme süresi
-- `WithMaxRetries(int)` - Maksimum yeniden deneme sayısı
+- `WithHeaders(map[string]string)` - Example Headers
+- `WithRateLimit(duration)` - Request Duration
+- `WithMaxRetries(int)` - Max Retry Usage
 - `WithProxy(string)` - Proxy URL
-- `WithJavaScript(bool)` - JavaScript desteği (gelecek sürümde)
+- `WithJavaScript(bool)` - JavaScript Support
 
-### Parser Metodları
+### PARSER METHODS
 
-- `ExtractText(selector)` - Tek text çıkarma
-- `ExtractTexts(selector)` - Çoklu text çıkarma
-- `ExtractAttr(selector, attr)` - Attribute çıkarma
-- `ExtractLinks()` - Tüm linkleri çıkarma
-- `ExtractImages()` - Tüm resimleri çıkarma
-- `ExtractMetaTags()` - Meta tag'leri çıkarma
-- `ExtractTitle()` - Sayfa başlığı
-- `ExtractByRegex(pattern)` - Regex ile çıkarma
+- `ExtractText(selector)` 
+- `ExtractTexts(selector)`
+- `ExtractAttr(selector, attr)`
+- `ExtractLinks()` 
+- `ExtractImages()`
+- `ExtractMetaTags()`
+- `ExtractTitle()`
+- `ExtractByRegex(pattern)`
 
-## Örnekler
-
-Daha fazla örnek için `examples/` klasörüne bakın.
-
-## Lisans
+## License
 
 MIT License
 
-## Katkıda Bulunma
+## Contribute
 
-Pull request'ler memnuniyetle karşılanır. Büyük değişiklikler için önce issue açarak tartışalım.
+Pull requests are welcome. For major changes, let's discuss by opening an issue first.
 ## 🏗
 ️ Architecture
 
@@ -521,9 +508,7 @@ goscraper.WithProxy(string)             // Proxy URL
 
 ## 📞 Support & Sponsorship
 
-- **GitHub Sponsors**: [Sponsor this project](https://github.com/sponsors/goscraper)
-- **Ko-fi**: [Support on Ko-fi](https://ko-fi.com/goscraper)
-- **PayPal**: [One-time donation](https://paypal.me/goscraper)
+- **GitHub Sponsors**: [Sponsor this project](https://github.com/sponsors/ramusaaa)
 
 ## 🏆 Why Choose GoScraper?
 
@@ -540,4 +525,4 @@ goscraper.WithProxy(string)             // Proxy URL
 
 **⭐ Star this repository if you find it useful!**
 
-**💰 [Become a Sponsor](https://github.com/sponsors/goscraper) to support development**
+**💰 [Become a Sponsor](https://github.com/sponsors/ramusaaa) to support development**
