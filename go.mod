@@ -6,6 +6,7 @@ require (
 	github.com/PuerkitoBio/goquery v1.8.1
 	github.com/chromedp/chromedp v0.9.3
 	github.com/go-rod/rod v0.114.5
+	github.com/gorilla/mux v1.8.1
 	github.com/hashicorp/consul/api v1.25.1
 	github.com/prometheus/client_golang v1.17.0
 	github.com/redis/go-redis/v9 v9.3.0
